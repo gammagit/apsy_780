@@ -18,11 +18,14 @@ class Coin:
     def flip(self):
         self.side_up = self.rng.choice(self.sides)
 
-
+x = 24
+y = 25
+print(x, type(x))
+print(y, type(y))
 pocket_coin1 = Coin(value = 10)
 pocket_coin2 = Coin()
 
-print(pocket_coin1)
+print(pocket_coin1, type(pocket_coin1))
 print(pocket_coin2)
 
 pocket_coin1.flip()
