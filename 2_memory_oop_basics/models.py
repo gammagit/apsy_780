@@ -1,7 +1,8 @@
 import numpy as np
+from .helpers import clip01
 
 class SimpleMemoryModel:
-    def __init__(self, retrieval_decay=0.1, encoding_error=0.1, noise=0.2, seed=42): # Class constructor
+    def __init__(self, retrieval_decay=0.1, encoding_error=0.1, noise=0.05, seed=42): # Class constructor
         self.retrieval_decay = retrieval_decay  # Instance attributes: depends on the length of things stored in memory (list_length)
         self.encoding_error = encoding_error
         self.rng = np.random.default_rng(seed)
@@ -13,10 +14,7 @@ class SimpleMemoryModel:
         prob_correct_recall = prob_correct_recall + self.rng.normal(0.0, self.noise)
 
         # Clip the probabilities between 0 & 1
-        if prob_correct_recall > 1:
-            prob_correct_recall = 1
-        if prob_correct_recall < 0:
-            prob_correct_recall = 0
+        prob_correct_recall = clip01(prob_correct_recall)
 
         # Randomly draw a result based on the prob_correct_recall
         if prob_correct_recall > self.rng.random():
@@ -43,17 +41,16 @@ class InterferenceMemoryModel(SimpleMemoryModel):
         return p_correct_recall, accurate_recall
 
 
-# class SillyMemory(InterferenceMemoryModel):
 
+if __name__ == '__main__':
+    someones_memory = SimpleMemoryModel() # Individual 1's memory instance
+    someone_elses_memory = InterferenceMemoryModel(seed=32) # Individual 2's memory instance
 
+    print("I'm the king of the world!!!")
+    # print(type(someone_elses_memory.rng))
 
-someones_memory = SimpleMemoryModel() # Individual 1's memory instance
-someone_elses_memory = InterferenceMemoryModel(seed=32) # Individual 2's memory instance
+    p1, acc1 = someones_memory.simulate_trial(['5','7','3','4','2'])
+    print(f"Prob & Acc of recall for Individual 1: {p1}, {acc1}")
 
-# print(type(someone_elses_memory.rng))
-
-p1, acc1 = someones_memory.simulate_trial(['5','7','3','4','2'])
-print(f"Prob & Acc of recall for Individual 1: {p1}, {acc1}")
-
-p2, acc2 = someone_elses_memory.simulate_trial(['5','7','3','4','2'])
-print(f"Prob & Acc of recall for Individual 2: {p2}, {acc2}")
+    p2, acc2 = someone_elses_memory.simulate_trial(['5','7','3','4','2'])
+    print(f"Prob & Acc of recall for Individual 2: {p2}, {acc2}")
