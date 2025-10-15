@@ -1,12 +1,14 @@
 from .encoder import WordEncoder
 from .similarity import Similarity
+from .attention import Attention
+from .attention import DotProductAttention
 
 if __name__ == "__main__":
 
-    my_encoder = WordEncoder(20)
+    my_encoder = WordEncoder(3)
 
     words = ['Apple', 'Bread', 'Cloud']
-    cue = 'Fruit'
+    cue = 'Cloud'
 
     # Encode all the words in the list called 'words'
     list_of_encodings = []
@@ -25,3 +27,15 @@ if __name__ == "__main__":
         list_of_sims.append(sim_word)
 
     print(f"Similarities to {cue}: {list_of_sims}")
+
+    attention = Attention()
+    weights = attention.softmax(list_of_sims, temperature=0.9)
+    print(f"Attention weights for {cue}: {weights}")
+
+
+    # Use dot product attention to calculate context
+    dp_attention = DotProductAttention(0.5)
+    weights, context = dp_attention.attend(encoding_cue, list_of_encodings, list_of_encodings)
+
+    print(f"Attention weights: {weights}")
+    print(f"Context: {context}")
